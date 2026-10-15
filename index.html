@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f4ef">
+  <meta name="description" content="输入三段对话，生成 Claude 封禁梗图。实时预览、高清下载，纯本地运行。">
+  <title>Claude 梗图生成器</title>
+  <style>
+    :root{--paper:#f6f4ef;--ink:#252720;--muted:#787a70;--line:#dedfd5;--accent:#cf7258;--serif:Georgia,"Songti SC","Noto Serif CJK SC",serif;--sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+    *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}button,input,textarea{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid #cf725870;outline-offset:4px}button:disabled{opacity:.6;cursor:wait}a{color:inherit}svg{display:block;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+    .topbar{height:86px;max-width:1440px;margin:auto;padding:0 6%;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}.brand{display:flex;align-items:center;gap:11px;font-weight:650;font-size:15px;letter-spacing:.02em}.brand-mark{color:var(--accent);font:36px/1 Georgia;display:inline-block}.top-note{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:8px}.dot{width:6px;height:6px;border-radius:50%;background:#829076}
+    main{max-width:1280px;padding:52px 36px 44px;margin:auto;display:grid;grid-template-columns:minmax(0,1fr) minmax(330px,460px);gap:88px;align-items:start}.eyebrow{font-size:11px;letter-spacing:.15em;color:var(--accent);font-weight:650;margin:0 0 16px}.intro h1{font-family:var(--serif);font-size:43px;line-height:1.35;font-weight:500;letter-spacing:-1.5px;margin:0 0 16px}.intro h1 span{color:var(--accent)}.intro p{font-size:14px;line-height:1.9;color:var(--muted);margin:0}.editor{margin-top:32px}.section-title{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:20px}.section-title h2{font-size:14px;margin:0;font-weight:600}.text-btn{border:0;padding:5px 0;background:transparent;color:var(--muted);font-size:12px}.text-btn:hover{color:var(--accent)}.field{margin-bottom:20px}.field-heading{display:flex;align-items:center;gap:9px;margin:0 0 9px}.number{font-size:10px;border:1px solid #d7d8ce;border-radius:50%;width:21px;height:21px;display:grid;place-items:center;color:var(--muted)}label{font-size:13px;font-weight:550}.role{font-size:10px;letter-spacing:.04em;color:#92958a;margin-left:auto}.input-wrap{position:relative}textarea,input{width:100%;border:1px solid #dddfd4;border-radius:10px;background:#fffefa;color:var(--ink);padding:14px 16px;line-height:1.75;font-size:14px;outline:none;transition:border-color .2s,box-shadow .2s}textarea{display:block;resize:vertical;min-height:84px;padding-bottom:28px}textarea:focus,input:focus{border-color:#c98b76;box-shadow:0 0 0 3px #cf725810}.count{position:absolute;right:12px;bottom:9px;pointer-events:none;font-size:10px;color:#999c91;font-variant-numeric:tabular-nums}.tip{font-size:11px;color:var(--muted);line-height:1.7;margin:4px 0 0}details{border-top:1px solid var(--line);padding:16px 0;margin-top:6px}summary{font-size:12px;color:var(--muted);cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between}summary::-webkit-details-marker{display:none}summary svg{width:14px;height:14px;transition:transform .2s}details[open] summary svg{transform:rotate(180deg)}.settings{padding-top:15px;display:grid;grid-template-columns:1fr 1fr;gap:16px}.settings label{font-size:11px;color:var(--muted);display:block;margin-bottom:6px}.settings input{font-size:13px;padding:9px 11px}
+    .download{border:0;border-radius:10px;width:100%;background:var(--ink);color:white;font-size:14px;font-weight:550;min-height:52px;display:flex;gap:10px;align-items:center;justify-content:center;transition:background .2s,transform .2s;margin-top:8px}.download:hover{background:#42463a;transform:translateY(-1px)}.download svg{width:18px;height:18px}.actions{display:flex;justify-content:space-between;align-items:center;margin-top:10px}.actions span{font-size:10px;color:#8d9084}.actions .text-btn{text-decoration:underline;text-underline-offset:3px}.privacy{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:11px;margin-top:20px}.privacy svg{width:13px;height:13px}
+    .preview-section{min-width:0}.preview-header{height:28px;display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.preview-label{font-size:11px;color:var(--muted);letter-spacing:.08em;display:flex;align-items:center;gap:7px}.preview-label .dot{background:var(--accent);width:5px;height:5px}.size-label{font-family:monospace;font-size:10px;color:#8d9084}.preview-stage{background:#e9e7df;padding:22px;border-radius:17px;border:1px solid #e0ded5}.preview-frame{background:#131313;border-radius:5px;overflow:hidden;box-shadow:0 9px 26px #22241a18}canvas{display:block;width:100%;height:auto}.preview-foot{display:flex;align-items:center;justify-content:center;gap:6px;font-size:10px;color:#909286;margin-top:15px}.preview-foot svg{width:12px;height:12px}.site-footer{max-width:1208px;margin:0 auto;border-top:1px solid var(--line);padding:21px 0 27px;display:flex;justify-content:space-between;font-size:10px;color:#96998c;line-height:1.8}.footer-wordmark{font-family:Georgia,serif;letter-spacing:.12em;font-size:11px}.toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,15px);opacity:0;pointer-events:none;background:#292d24;color:#fff;padding:12px 20px;border-radius:9px;font-size:12px;transition:.2s;z-index:10;max-width:90vw;width:max-content;box-shadow:0 4px 24px #0002}.toast.show{opacity:1;transform:translate(-50%,0)}dialog{border:1px solid var(--line);border-radius:16px;padding:18px;max-width:92vw;max-height:92vh;background:var(--paper)}dialog::backdrop{background:#0009}dialog .dialog-head{display:flex;justify-content:space-between;align-items:center;font-size:13px;margin-bottom:12px;gap:20px}dialog img{max-width:100%;max-height:72vh;display:block;margin:auto}dialog .text-btn{padding:6px 12px}dialog p{font-size:11px;color:var(--muted);text-align:center}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    @media(min-width:1400px){main{padding-top:60px}}@media(max-width:1000px){main{gap:38px;padding:38px 28px;grid-template-columns:minmax(0,1fr) minmax(300px,390px)}.intro h1{font-size:34px}.preview-stage{padding:16px}.site-footer{margin:0 28px}}@media(max-width:720px){.topbar{height:66px;padding:0 22px}.top-note{font-size:10px}.brand{font-size:13px}main{display:flex;flex-direction:column;padding:32px 22px;gap:34px}.editor-section,.preview-section{width:100%}.intro h1{font-size:35px;letter-spacing:-1px}.intro p{font-size:13px}.editor{margin-top:28px}.preview-section{max-width:460px;align-self:center}.preview-stage{padding:18px}.site-footer{margin:0 22px;gap:20px}.site-footer span:last-child{text-align:right}.privacy{margin-top:15px}.settings{gap:10px}}@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+    .presets{border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:24px;background:#eeeee7}.preset-grid{display:grid;grid-template-columns:110px minmax(0,1fr);gap:12px}.presets label{display:block;font-size:11px;color:var(--muted);margin-bottom:7px}.presets select{font:inherit;font-size:12px;width:100%;min-width:0;min-height:40px;padding:9px 26px 9px 10px;border:1px solid #dddfd4;border-radius:7px;background:#fffefa;color:var(--ink);cursor:pointer}.presets select:focus-visible{outline:3px solid #cf725870;outline-offset:2px}.presets .tip{margin-top:10px;font-size:10px}@media(max-width:1000px){.preset-grid{grid-template-columns:1fr;gap:10px}}@media(max-width:720px){.preset-grid{grid-template-columns:95px minmax(0,1fr)}}
+  </style>
+</head>
+<body>
+  <header class="topbar"><div class="brand"><span class="brand-mark" aria-hidden="true">✳</span>Claude 梗图生成器</div><div class="top-note"><i class="dot"></i>灵感三句话，封号一瞬间</div></header>
+  <main>
+    <section class="editor-section" aria-labelledby="page-title">
+      <div class="intro"><div class="eyebrow">A LITTLE DRAMA, A LITTLE CLAUDE.</div><h1 id="page-title">三句话，<br>让 Claude <span>沉默。</span></h1><p>把你的脑洞填进对话里。<br>剩下的，交给那张熟悉的封禁提示。</p></div>
+      <form class="editor" id="editor">
+        <div class="section-title"><h2>编写你的对话</h2><button class="text-btn" type="button" id="example">换个例子 ↗</button></div>
+        <div class="presets"><div class="preset-grid"><div><label for="theme">选择主题</label><select id="theme"><option value="all">全部主题</option></select></div><div><label for="preset">选择示例</label><select id="preset"><option value="">自定义对话</option></select></div></div><p class="tip">选一个梗，自动填入三段对话。会替换当前内容，填入后仍可自由修改。</p></div>
+        <div class="field"><div class="field-heading"><span class="number">01</span><label for="first">故事的开始</label><span class="role">你说</span></div><div class="input-wrap"><textarea id="first" rows="2" maxlength="180" spellcheck="false" required>Claude，好累啊每天都要上学，压力好大</textarea><span class="count" data-for="first"></span></div></div>
+        <div class="field"><div class="field-heading"><span class="number">02</span><label for="reply">一本正经的安慰</label><span class="role">CLAUDE 说</span></div><div class="input-wrap"><textarea id="reply" rows="4" maxlength="600" spellcheck="false" required>每天上学四个多小时确实累，
+没事呀现在想必你已经洗完一个舒服的澡，
+美美在床上休息吧。</textarea><span class="count" data-for="reply"></span></div></div>
+        <div class="field"><div class="field-heading"><span class="number">03</span><label for="last">致命的追问</label><span class="role">你又说</span></div><div class="input-wrap"><textarea id="last" rows="2" maxlength="180" spellcheck="false" required>四个小时？</textarea><span class="count" data-for="last"></span></div><p class="tip">一个小小的反问，往往就是故事的转折。</p></div>
+        <details><summary>画面设置<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><div class="settings"><div><label for="model">顶部模型名称</label><input id="model" maxlength="28" value="Opus 5.5" autocomplete="off"></div><div><label for="fontSize">对话字号（28–42）</label><input id="fontSize" type="number" min="28" max="42" step="1" value="34"></div></div><p class="tip">长对话会自动加高画面，换行也会保留。</p></details>
+        <button class="download" id="download" type="submit"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M4 15v5h16v-5"/></svg><span>下载梗图</span><span style="opacity:.4;font-size:11px;font-weight:400">PNG</span></button>
+        <div class="actions"><span>高清 2× 导出 · 无水印</span><button class="text-btn" type="button" id="view">查看大图</button></div>
+        <div class="privacy"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V6a4 4 0 0 1 8 0v4"/></svg>纯本地生成，对话内容不会上传</div>
+      </form>
+    </section>
+    <section class="preview-section" aria-label="梗图实时预览"><div class="preview-header"><span class="preview-label"><i class="dot"></i>实时预览</span><span class="size-label" id="dimensions">1800 × 2560 PX</span></div><div class="preview-stage"><div class="preview-frame"><canvas id="meme" width="1800" height="2560" role="img" aria-label="生成的 Claude 对话梗图，包含输入的三段对话、省略号回复和账号封禁提示"></canvas></div></div><div class="preview-foot"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4zM8 9h8m-8 4h5"/></svg>所见即所得，下载即是此刻的脑洞</div></section>
+  </main>
+  <footer class="site-footer"><span class="footer-wordmark">MADE FOR THE MEME.<br><a href="https://github.com/Techeek/claude-meme-generator" target="_blank" rel="noopener noreferrer" style="font-family:var(--sans);letter-spacing:0">GitHub · MIT 开源 ↗</a></span><span>仅供娱乐创作 · 非 Claude 官方产品<br>图中的封禁提示为虚构梗图内容</span></footer>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <dialog id="imageDialog"><div class="dialog-head"><span>你的 Claude 梗图</span><button class="text-btn" type="button" id="closeDialog" aria-label="关闭大图">关闭 ✕</button></div><img id="fullImage" alt="生成的 Claude 梗图"><p>手机可长按图片保存，电脑可右键另存为。</p></dialog>
+  <noscript><p style="padding:24px;text-align:center">请启用 JavaScript 以使用梗图生成器。</p></noscript>
+  <script>
+  (() => {
+    'use strict';
+    const $ = id => document.getElementById(id);
+    const canvas = $('meme');
+    let ctx = canvas.getContext('2d');
+    const family = '-apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif';
+    const fields = ['first', 'reply', 'last', 'model', 'fontSize'];
+    const examples = [
+      { id:'shared-area', theme:'公摊面积', title:'床搬进电梯井', first:'Claude，我终于买了套100平的房子！', reply:'恭喜！100平足够安排三个卧室，再留一个宽敞的客厅，好好享受自己的家吧。', last:'你先帮我把电梯井里的床搬出来。' },
+      { id:'gift-area', theme:'公摊面积', title:'买房送面积', first:'Claude，开发商说这套房赠送20平。', reply:'太划算了！这20平可以做书房，终于有一块完全属于自己的空间了。', last:'公摊的30平能不能也说是我赠送给他的？' },
+      { id:'holiday', theme:'调休', title:'调休的长假', first:'Claude，下周终于放五天假了！', reply:'太好了！每周工作五天已经很辛苦，这次终于可以连续休息，好好恢复一下。', last:'每周工作几天？' },
+      { id:'holiday-math', theme:'调休', title:'调休的数学', first:'Claude，为什么放个假比上班还累？', reply:'可能是旅游行程太满了。下次少安排几个景点，给自己留点真正休息的时间。', last:'我的行程是连上七天班。' },
+      { id:'lost-weekend', theme:'调休', title:'周末去哪了', first:'Claude，我周日还要上班。', reply:'辛苦了。虽然牺牲了一个休息日，但想到额外的加班费，多少也算一点安慰。', last:'你说的那个“额外”，是下周六吗？' },
+      { id:'property-fee', theme:'物业', title:'物业费买了什么', first:'Claude，我每个月都交物业费。', reply:'花钱换来省心也值得。公共设施坏了有人及时维修，遇到问题也有人帮你解决。', last:'他们让我自己去找邻居协商。' },
+      { id:'mortgage', theme:'房贷', title:'提前还贷先排队', first:'Claude，我攒了点钱，想提前还房贷。', reply:'这是好事！早点还清，既能减少利息，也能早点摆脱每月还款的压力。', last:'他们让我先排队证明自己有还钱的资格。' },
+      { id:'take-home-pay', theme:'工资', title:'月薪和到手工资', first:'Claude，我月薪终于一万了！', reply:'恭喜！每个月拿到一万元，付完房租和生活费，应该还能存下一笔钱。', last:'谁说拿到一万元了？' },
+      { id:'salary', theme:'工资', title:'工资到账，存下一半', first:'Claude，这个月工资终于到账了！', reply:'太好了！付完房租，存下一半，\n剩下的钱可以买点喜欢的东西，奖励自己。', last:'存下一半？' },
+      { id:'school', theme:'上学', title:'每天上学四小时', first:'Claude，好累啊每天都要上学，压力好大', reply:'每天上学四个多小时确实累，\n没事呀现在想必你已经洗完一个舒服的澡，\n美美在床上休息吧。', last:'四个小时？' },
+      { id:'overtime', theme:'加班', title:'加班到六点', first:'Claude，今天又加班了，好累。', reply:'辛苦了，偶尔加班到六点确实不容易。\n赶紧回家吃顿热饭，好好休息一下吧。', last:'六点不是早上吗？' }
+    ];
+    let toastTimer, renderFrame, fullImageUrl;
+    const storageKey = 'claude-meme-generator-v1';
+    try { const saved = JSON.parse(localStorage.getItem(storageKey)); if (saved && typeof saved === 'object') fields.forEach(k => { if(typeof saved[k] === 'string') $(k).value = saved[k].slice(0, $(k).maxLength > 0 ? $(k).maxLength : 8); }); } catch (_) {}
+    const dialogueFields = ['first', 'reply', 'last'];
+    const themes = [...new Set(examples.map(example=>example.theme))];
+    themes.forEach(theme=>$('theme').add(new Option(theme,theme)));
+    function filteredExamples(){return examples.filter(example=>$('theme').value==='all'||example.theme===$('theme').value);}
+    function matchesDialogue(example){return dialogueFields.every(key=>$(key).value===example[key]);}
+    function syncPreset(){const matched=filteredExamples().find(matchesDialogue);$('preset').value=matched?matched.id:'';}
+    function updatePresets(){
+      $('preset').replaceChildren(new Option('自定义对话',''));
+      for(const theme of themes){
+        const items=filteredExamples().filter(example=>example.theme===theme);
+        if(!items.length)continue;
+        const group=document.createElement('optgroup');group.label=theme;
+        items.forEach(example=>group.appendChild(new Option(example.title,example.id)));
+        $('preset').appendChild(group);
+      }
+      syncPreset();
+    }
+    function applyExample(example){
+      if(!example)return;
+      dialogueFields.forEach(key=>$(key).value=example[key]);
+      schedule();toast(`已填入「${example.title}」，可以继续修改。`);
+    }
+    updatePresets();
+    function font(size, weight=400) { ctx.font = `${weight} ${size}px ${family}`; }
+    function roundRect(x,y,w,h,r,fill,stroke) { ctx.beginPath(); ctx.roundRect(x,y,w,h,r); if(fill){ctx.fillStyle=fill;ctx.fill();}if(stroke){ctx.strokeStyle=stroke;ctx.stroke();} }
+    function path(points) { ctx.beginPath(); points.forEach((p,i)=>i?ctx.lineTo(...p):ctx.moveTo(...p));ctx.stroke(); }
+    function icon(type,x,y,s=36) {
+      ctx.save();ctx.translate(x,y);ctx.scale(s/36,s/36);ctx.strokeStyle='#d2d3cf';ctx.lineWidth=2.2;ctx.lineCap='round';ctx.lineJoin='round';
+      if(type==='copy'){roundRect(11,10,23,25,2,null,'#d2d3cf');roundRect(3,2,23,25,2,'#131313','#d2d3cf');}
+      if(type==='share'){path([[18,26],[18,3]]);path([[9,12],[18,3],[27,12]]);path([[3,25],[3,34],[33,34],[33,25]]);}
+      if(type==='play'){path([[6,2],[33,18],[6,34],[6,2]]);}
+      if(type==='up'||type==='down'){if(type==='down'){ctx.translate(0,36);ctx.scale(1,-1);}ctx.beginPath();ctx.moveTo(10,33);ctx.lineTo(10,15);ctx.bezierCurveTo(18,12,18,5,20,2);ctx.bezierCurveTo(26,0,29,5,25,14);ctx.lineTo(33,14);ctx.quadraticCurveTo(37,14,35,20);ctx.lineTo(32,31);ctx.quadraticCurveTo(32,34,28,34);ctx.closePath();ctx.stroke();path([[10,15],[4,15],[4,33],[10,33]]);}
+      ctx.restore();
+    }
+    function toolbar(y) { ['copy','share','play','up','down'].forEach((type,i)=>icon(type,51+i*79,y,35)); }
+    const segmenter = typeof Intl.Segmenter === 'function' ? new Intl.Segmenter('zh',{granularity:'grapheme'}) : null;
+    function wrap(text, maxWidth) {
+      const lines=[];
+      for(const paragraph of text.replace(/\r\n?/g,'\n').split('\n')){
+        let line='';
+        const chars=segmenter ? Array.from(segmenter.segment(paragraph), item=>item.segment) : Array.from(paragraph);
+        for(const char of chars){
+          const closingPunctuation=/^[，。！？、；：,.!?;:%）)】\]》」』…]$/.test(char);
+          if(line && ctx.measureText(line+char).width>maxWidth && !closingPunctuation){lines.push(line);line=char;}else line+=char;
+        }
+        lines.push(line);
+      }
+      return lines;
+    }
+    function drawLines(lines,x,y,lh,color='#e7e7e2'){ctx.fillStyle=color;lines.forEach((line,i)=>ctx.fillText(line,x,y+i*lh));}
+    function bubble(lines,y,size,lh,minWidth=170){
+      font(size);const w=Math.min(758,Math.max(minWidth,...lines.map(line=>ctx.measureText(line).width+52)));
+      const h=Math.max(92,lines.length*lh+34);const x=862-w;
+      roundRect(x,y,w,h,35,'#090909');drawLines(lines,x+26,y+20,lh);return y+h;
+    }
+    function render(){
+      renderFrame = null;
+      const size=Math.max(28,Math.min(42,Number($('fontSize').value)||34));
+      const lh=Math.round(size*1.55);
+      // Measure at the logical screenshot size; the exported bitmap is always 2×.
+      ctx.setTransform(2,0,0,2,0,0);font(size);
+      const first=wrap($('first').value,470), reply=wrap($('reply').value,798), last=wrap($('last').value,470);
+      const hFirst=Math.max(132,first.length*lh+34);
+      const hReply=Math.max(154,reply.length*lh);
+      const hLast=Math.max(92,last.length*lh+34);
+      const replyY=126+hFirst+62, toolsY=replyY+hReply+44, lastY=toolsY+84;
+      const dotsY=lastY+hLast+59, tools2Y=dotsY+64;
+      const banY=Math.max(925,tools2Y+91), height=banY+355;
+      canvas.width=1800;canvas.height=height*2;ctx=canvas.getContext('2d');ctx.scale(2,2);ctx.textBaseline='top';
+      ctx.fillStyle='#131313';ctx.fillRect(0,0,900,height);
+      // Header, recreated with vector paths so export has no external assets.
+      ctx.lineWidth=1.4;roundRect(46,8,84,84,42,null,'#383936');
+      ctx.strokeStyle='#e7e7e2';ctx.lineWidth=2.7;ctx.lineCap='round';path([[73,39],[103,39]]);path([[73,50],[103,50]]);path([[73,61],[92,61]]);
+      font(35,550);const model=$('model').value.trim()||'Opus 5.5';let modelFont=35;font(modelFont,550);while(ctx.measureText(model).width>430&&modelFont>18)font(--modelFont,550);
+      const modelWidth=ctx.measureText(model).width;ctx.fillStyle='#f0f0eb';ctx.fillText(model,450-(modelWidth+40)/2,34+(35-modelFont)/2);ctx.strokeStyle='#e7e7e2';ctx.lineWidth=2.5;const arrowX=450+(modelWidth+40)/2-20;path([[arrowX,45],[arrowX+9,54],[arrowX+18,45]]);
+      ctx.lineWidth=1.4;roundRect(768,8,84,84,42,null,'#383936');
+      ctx.fillStyle='#f2785c';ctx.beginPath();ctx.arc(810,49,20,Math.PI*.9,Math.PI*2.9);ctx.fill();ctx.beginPath();ctx.moveTo(799,62);ctx.lineTo(790,71);ctx.lineTo(814,69);ctx.fill();ctx.strokeStyle='#171717';ctx.lineWidth=4;path([[801,49],[819,49]]);path([[810,40],[810,58]]);
+      font(size);bubble(first,126,size,lh,180);drawLines(reply,51,replyY,lh);toolbar(toolsY);bubble(last,lastY,size,lh);font(size);drawLines(['……'],51,dotsY,lh);toolbar(tools2Y);
+      // Fixed punchline card.
+      ctx.lineWidth=1.5;roundRect(28,banY,844,328,28,'#2b1c14','#503024');
+      ctx.strokeStyle='#f37b5f';ctx.lineWidth=7;ctx.beginPath();ctx.arc(104,banY+85,39,0,Math.PI*2);ctx.stroke();path([[77,banY+58],[131,banY+112]]);
+      font(34,650);drawLines(['你的账号已被封禁'],188,banY+57,45,'#f0eeea');font(27);drawLines(['由于违反我们的服务条款，你的 Claude 账号已被封禁。','如果你认为这是一个错误，请联系支持团队。'],188,banY+124,48,'#ded8d1');
+      ctx.lineWidth=1.4;roundRect(188,banY+228,205,65,21,null,'#5b493b');font(28);drawLines(['了解更多'],216,banY+246,36,'#ede7df');ctx.strokeStyle='#ede7df';ctx.lineWidth=2.2;path([[352,banY+252],[352,banY+270],[369,banY+270],[369,banY+262]]);path([[359,banY+250],[370,banY+250],[370,banY+260]]);path([[358,banY+262],[370,banY+250]]);
+      $('dimensions').textContent=`${canvas.width} × ${canvas.height} PX`;
+      document.querySelectorAll('.count').forEach(el=>{const f=$(el.dataset.for);el.textContent=`${f.value.length} / ${f.maxLength}`;});
+    }
+    function save(){try{localStorage.setItem(storageKey,JSON.stringify(Object.fromEntries(fields.map(k=>[k,$(k).value]))));}catch(_){}}
+    function schedule(){syncPreset();save();if(!renderFrame)renderFrame=requestAnimationFrame(render);}
+    function toast(message){clearTimeout(toastTimer);$('toast').textContent=message;$('toast').classList.add('show');toastTimer=setTimeout(()=>$('toast').classList.remove('show'),3500);}
+    function imageBlob(){return new Promise((resolve,reject)=>canvas.toBlob(blob=>blob?resolve(blob):reject(new Error('图片生成失败')),'image/png'));}
+    async function showImage(){render();try{const blob=await imageBlob();if(fullImageUrl)URL.revokeObjectURL(fullImageUrl);fullImageUrl=URL.createObjectURL(blob);$('fullImage').src=fullImageUrl;$('imageDialog').showModal();}catch(_){toast('图片生成失败，请重试。');}}
+    fields.forEach(k=>$(k).addEventListener('input',schedule));
+    $('fontSize').addEventListener('change',()=>{$('fontSize').value=Math.max(28,Math.min(42,Number($('fontSize').value)||34));schedule();});
+    $('theme').addEventListener('change',()=>{updatePresets();applyExample(filteredExamples()[0]);});
+    $('preset').addEventListener('change',()=>applyExample(filteredExamples().find(example=>example.id===$('preset').value)));
+    $('example').addEventListener('click',()=>{const items=filteredExamples();const index=items.findIndex(matchesDialogue);applyExample(items[(index+1)%items.length]);});
+    $('editor').addEventListener('submit',async event=>{
+      event.preventDefault();if(!['first','reply','last'].every(k=>$(k).value.trim())){toast('先把三段对话填完整吧。');return;}
+      const button=$('download');button.disabled=true;
+      try{render();const blob=await imageBlob();const url=URL.createObjectURL(blob);const link=document.createElement('a');link.href=url;link.download=`Claude梗图-${Date.now()}.png`;document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);toast('图片已生成。若未自动下载，可点「查看大图」保存。');}catch(_){toast('下载失败，请点击「查看大图」后另存图片。');}finally{button.disabled=false;}
+    });
+    $('view').addEventListener('click',showImage);$('closeDialog').addEventListener('click',()=>$('imageDialog').close());$('imageDialog').addEventListener('click',event=>{if(event.target===$('imageDialog')){const rect=$('imageDialog').getBoundingClientRect();if(event.clientX<rect.left||event.clientX>rect.right||event.clientY<rect.top||event.clientY>rect.bottom)$('imageDialog').close();}});
+    render();if(document.fonts)document.fonts.ready.then(render);
+  })();
+  </script>
+</body>
+</html>
